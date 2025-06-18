@@ -1,11 +1,12 @@
 // admin_panel/src/pages/LoginPage.js
 import React, { useState } from "react";
-import axios from "axios"; // Ou fetch
-import { useNavigate } from "react-router-dom"; // Pour la redirection
+import axios from "axios";
+import { useNavigate, Link } from "react-router-dom"; // <--- AJOUTEZ Link ICI
 
 // **ATTENTION : REMPLACE PAR L'URL DE TON BACKEND EN LOCAL**
-// Puisque l'admin panel tournera aussi sur localhost (sur un autre port), localhost fonctionnera ici.
-const API_BASE_URL = "https://artiva-repository.onrender.com/api";
+// Le commentaire ci-dessus est un peu déroutant maintenant que l'URL pointe vers onrender.com.
+// Il est préférable d'utiliser des variables d'environnement pour cela.
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://artiva-repository.onrender.com/api";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -27,14 +28,16 @@ function LoginPage() {
 
       const { token, user } = response.data;
 
+      // Il est plus sûr de vérifier que 'user' et 'user.role' existent avant d'y accéder
       if (user && user.role === "admin") {
-        // Vérifier si l'utilisateur est bien un admin
-        localStorage.setItem("adminToken", token); // Stocker le token dans localStorage
-        localStorage.setItem("adminUser", JSON.stringify(user)); // Stocker les infos user
+        localStorage.setItem("adminToken", token);
+        localStorage.setItem("adminUser", JSON.stringify(user));
         console.log("Connexion Admin réussie:", user);
-        navigate("/dashboard"); // Rediriger vers le tableau de bord admin
-      } else {
+        navigate("/dashboard");
+      } else if (user) { // L'utilisateur existe mais n'est pas admin
         setError("Accès refusé. Vous devez être administrateur.");
+      } else { // La réponse ne contenait pas d'utilisateur ou était inattendue
+        setError("Réponse inattendue du serveur après la connexion.");
       }
     } catch (err) {
       console.error("Erreur de connexion admin:", err);
