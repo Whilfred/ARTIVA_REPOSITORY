@@ -173,15 +173,15 @@ exports.loginUser = async (req, res) => {
 };
 // NOUVELLE FONCTION : Enregistrer un nouvel administrateur
 exports.registerAdmin = async (req, res) => {
-  const { name, email, password, role } = req.body; // 'role' peut être optionnel ici si on le force à 'admin'
+  const {email, password, role } = req.body; // 'role' peut être optionnel ici si on le force à 'admin'
 
   // Validation basique
-  if (!name || !email || !password) {
+  if (!email || !password) {
     return res
       .status(400)
       .json({
         message:
-          "Veuillez fournir le nom, l'email et le mot de passe pour l'admin.",
+          "Veuillez fournir l'email et le mot de passe pour l'admin.",
       });
   }
 
@@ -208,12 +208,11 @@ exports.registerAdmin = async (req, res) => {
 
     // Insérer le nouvel admin dans la table 'admin'
     const insertAdminQuery = `
-      INSERT INTO admin (name, email, password_hash, role)
+      INSERT INTO admin (email, password_hash, role)
       VALUES ($1, $2, $3, $4)
-      RETURNING id, name, email, role, created_at;
+      RETURNING id, email, role, created_at;
     `;
     const newAdmin = await db.query(insertAdminQuery, [
-      name,
       email,
       hashedPassword,
       adminRole,
