@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 // Tu pourrais créer un fichier CSS pour cette page aussi: import './ProductAddPage.css';
 
- = 'http://localhost:3001/api';
+ const API_BASE_URL= 'https://artiva-repository.onrender.com/api';
 
 function ProductAddPage() {
   const navigate = useNavigate();

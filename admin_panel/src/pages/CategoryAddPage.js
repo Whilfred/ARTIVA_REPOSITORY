@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
-const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = 'https://artiva-repository.onrender.com/api';
 
 function CategoryAddPage() {
   const navigate = useNavigate();
