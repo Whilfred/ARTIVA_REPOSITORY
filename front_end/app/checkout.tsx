@@ -94,12 +94,7 @@
 //   const handleSubmitOrder = async () => {
 //     // Validation basique
 //     if (
-//       !formData.fullName ||
-//       !formData.email ||
-//       !formData.phone ||
-//       !formData.addressLine1 ||
-//       !formData.city ||
-//       !formData.country
+
 //     ) {
 //       Alert.alert(
 //         "Champs requis",

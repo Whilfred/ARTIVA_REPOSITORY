@@ -11,7 +11,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "expo-env.d.ts",
+    "app", "types"
   ]
   // "exclude": ["node_modules"] // Est généralement géré par extends
 }
