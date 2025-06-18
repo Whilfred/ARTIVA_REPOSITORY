@@ -8,7 +8,6 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://artiva-repos
 const API_REGISTER_ENDPOINT = "/auth/admin/register"; // <--- CORRIGÉ ICI
 
 function RegisterPage() {
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   // const [role, setRole] = useState("admin"); // Si tu veux envoyer le rôle depuis le front-end
@@ -23,7 +22,7 @@ function RegisterPage() {
     setSuccessMessage("");
     setIsLoading(true);
 
-    if (!name || !email || !password) {
+    if (!email || !password) {
       setError("Veuillez remplir tous les champs obligatoires.");
       setIsLoading(false);
       return;
@@ -31,7 +30,7 @@ function RegisterPage() {
 
     try {
       const payload = {
-        name,
+        
         email,
         password,
         // role, // Si tu envoies le rôle, assure-toi que ton backend le gère
@@ -46,7 +45,7 @@ function RegisterPage() {
       setSuccessMessage(response.data.message + " Vous pouvez maintenant vous connecter.");
       console.log("Inscription Admin réussie:", response.data.admin); // Ceci devrait maintenant fonctionner
 
-      setName("");
+      
       setEmail("");
       setPassword("");
       // setRole("admin");
@@ -82,17 +81,6 @@ function RegisterPage() {
         onSubmit={handleSubmit}
         style={{ display: "flex", flexDirection: "column", width: "300px" }}
       >
-        <div style={{ marginBottom: "10px" }}>
-          <label htmlFor="name">Nom complet:</label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-          />
-        </div>
         <div style={{ marginBottom: "10px" }}>
           <label htmlFor="email">Email:</label>
           <input
