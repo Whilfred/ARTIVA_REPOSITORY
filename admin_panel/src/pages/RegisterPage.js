@@ -1,21 +1,17 @@
 // admin_panel/src/pages/RegisterPage.js
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom"; // Ajout de Link
+import { useNavigate, Link } from "react-router-dom";
 
-// URL de base de ton API (la même que pour LoginPage)
-const API_BASE_URL = "https://artiva-repository.onrender.com/api";
-// Le endpoint pour l'enregistrement des admins. Adapte si c'est différent.
-// Basé sur ta route, on peut supposer /auth/register-admin ou /admins/register
-// Je vais utiliser /auth/register-admin pour correspondre au style de /auth/login
-const API_REGISTER_ENDPOINT = "/auth/register-admin";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://artiva-repository.onrender.com/api"; // Bonne pratique
+// Le endpoint pour l'enregistrement des admins
+const API_REGISTER_ENDPOINT = "/auth/admin/register"; // <--- CORRIGÉ ICI
 
 function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // Optionnel: si tu veux permettre de choisir le rôle depuis le front-end
-  // const [role, setRole] = useState("admin"); // 'admin' ou 'super_admin'
+  // const [role, setRole] = useState("admin"); // Si tu veux envoyer le rôle depuis le front-end
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +23,6 @@ function RegisterPage() {
     setSuccessMessage("");
     setIsLoading(true);
 
-    // Validation simple (le backend fait aussi la sienne)
     if (!name || !email || !password) {
       setError("Veuillez remplir tous les champs obligatoires.");
       setIsLoading(false);
@@ -39,26 +34,25 @@ function RegisterPage() {
         name,
         email,
         password,
-        // role, // Décommente si tu gères le rôle depuis le front-end
+        // role, // Si tu envoies le rôle, assure-toi que ton backend le gère
       };
 
       const response = await axios.post(
-        `${API_BASE_URL}${API_REGISTER_ENDPOINT}`,
+        `${API_BASE_URL}${API_REGISTER_ENDPOINT}`, // Sera maintenant /api/auth/admin/register
         payload
       );
 
+      // Le backend pour registerAdmin renvoie response.data.admin
       setSuccessMessage(response.data.message + " Vous pouvez maintenant vous connecter.");
-      console.log("Inscription Admin réussie:", response.data.admin);
+      console.log("Inscription Admin réussie:", response.data.admin); // Ceci devrait maintenant fonctionner
 
-      // Optionnel: vider les champs après succès
       setName("");
       setEmail("");
       setPassword("");
       // setRole("admin");
 
-      // Rediriger vers la page de connexion après un court délai pour que l'utilisateur voie le message
       setTimeout(() => {
-        navigate("/login"); // Assure-toi que '/login' est ta route de connexion
+        navigate("/login");
       }, 3000);
 
     } catch (err) {
@@ -72,6 +66,7 @@ function RegisterPage() {
     }
   };
 
+  // ... le reste du JSX reste identique
   return (
     <div
       style={{
@@ -117,17 +112,19 @@ function RegisterPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            minLength="6" // Ajoute une validation de base pour la longueur du mot de passe si tu le souhaites
+            minLength="6"
             style={{ width: "100%", padding: "8px", marginTop: "5px" }}
           />
         </div>
         {/*
-        // Décommente si tu veux permettre de choisir le rôle depuis le front-end
+        Si tu actives le champ de rôle ici, assure-toi que ton backend
+        dans `registerAdmin` utilise bien le `role` fourni dans `req.body`
+        (actuellement, il le fait avec `const adminRole = role || "admin";`)
         <div style={{ marginBottom: "10px" }}>
           <label htmlFor="role">Rôle:</label>
           <select
             id="role"
-            value={role}
+            value={role} // tu devrais utiliser const [role, setRole] = useState("admin");
             onChange={(e) => setRole(e.target.value)}
             style={{ width: "100%", padding: "8px", marginTop: "5px" }}
           >
@@ -145,7 +142,7 @@ function RegisterPage() {
           disabled={isLoading}
           style={{
             padding: "10px",
-            backgroundColor: "dodgerblue", // Couleur différente pour le bouton d'inscription
+            backgroundColor: "dodgerblue",
             color: "white",
             border: "none",
             cursor: "pointer",
