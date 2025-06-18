@@ -3,7 +3,6 @@
     "name": "Artiva",
     "slug": "front_end",
     "version": "1.0.0",
-
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "frontend",
@@ -33,14 +32,18 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": ["expo-router", "expo-secure-store", "expo-localization"],
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-localization"
+    ],
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "0a285ca3-b7fe-4bf0-a1e7-cd80bf40fdd6"
+        "projectId": "0403d434-e85d-4c76-8d1c-166fe2f556b2"
       }
     }
   }
