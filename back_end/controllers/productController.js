@@ -38,7 +38,7 @@ exports.createProduct = async (req, res) => {
     const productQuery = `
       INSERT INTO products (name, description, price, stock, image_url, sku, is_published) 
       VALUES ($1, $2, $3, $4, $5, $6, $7)
-      RETURNING *;`; // RETURNING * récupère tous les champs du produit inséré
+      RETURNING *;`; 
     const productResult = await client.query(productQuery, [
       name, 
       description || null, 
@@ -663,7 +663,7 @@ exports.getAllProductsAdmin = async (req, res) => {
   const offset = (page - 1) * limit;
 
   try {
-    // Pas de filtre is_published = TRUE ici
+    
     const query = `
       SELECT 
         p.id, p.name, p.description, p.price, p.stock, p.image_url, 
@@ -701,7 +701,7 @@ exports.getAllProductsAdmin = async (req, res) => {
     }));
 
     res.status(200).json({
-        products: productsData, // Assure-toi que le frontend admin attend un objet avec une clé 'products'
+        products: productsData, 
         currentPage: parseInt(page, 10),
         totalPages,
         totalItems

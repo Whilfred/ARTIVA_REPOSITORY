@@ -118,8 +118,11 @@ CREATE TABLE products (
     -- Le champ 'image_url' de ta structure initiale pour une image principale simple
     -- a été omis ici en faveur de la table 'product_images' pour plus de flexibilité.
     -- Si tu veux garder une image principale simple ici, rajoute:
-    -- main_image_url TEXT,
+    image_url TEXT,
 );
+
+ALTER TABLE products ADD COLUMN IF NOT EXISTS image_url TEXT;
+
 
 COMMENT ON TABLE products IS 'Informations détaillées sur chaque produit offert.';
 COMMENT ON COLUMN products.sku IS 'Stock Keeping Unit, référence unique pour la gestion dinventaire.';
