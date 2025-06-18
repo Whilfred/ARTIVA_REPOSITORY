@@ -98,6 +98,9 @@ function LoginPage() {
         >
           {isLoading ? "Connexion..." : "Se connecter"}
         </button>
+        <p style={{ marginTop: "20px" }}>
+          Pas encore de compte ? <Link to="/register">Inscrivez-vous ici</Link>
+        </p>
       </form>
     </div>
   );
