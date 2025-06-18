@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://artiva-repository.onrender.com/api"; // Bonne pratique
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL ||
+  "https://artiva-repository.onrender.com/api"; // Bonne pratique
 // Le endpoint pour l'enregistrement des admins
-const API_REGISTER_ENDPOINT = "/auth/register"; // <--- CORRIGÉ ICI
 
 function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -29,23 +30,17 @@ function RegisterPage() {
     }
 
     try {
-      const payload = {
-        
-        email,
-        password,
-        // role, // Si tu envoies le rôle, assure-toi que ton backend le gère
-      };
-
       const response = await axios.post(
-        `${API_BASE_URL}${API_REGISTER_ENDPOINT}`, // Sera maintenant /api/auth/admin/register
-        payload
+        `${API_BASE_URL}/auth/admin/register`, // Sera maintenant /api/auth/admin/register
+        { email, password }
       );
 
       // Le backend pour registerAdmin renvoie response.data.admin
-      setSuccessMessage(response.data.message + " Vous pouvez maintenant vous connecter.");
+      setSuccessMessage(
+        response.data.message + " Vous pouvez maintenant vous connecter."
+      );
       console.log("Inscription Admin réussie:", response.data.admin); // Ceci devrait maintenant fonctionner
 
-      
       setEmail("");
       setPassword("");
       // setRole("admin");
@@ -53,7 +48,6 @@ function RegisterPage() {
       setTimeout(() => {
         navigate("/login");
       }, 3000);
-
     } catch (err) {
       console.error("Erreur d'inscription admin:", err);
       setError(
