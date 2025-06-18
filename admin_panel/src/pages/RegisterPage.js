@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://artiva-repository.onrender.com/api"; // Bonne pratique
 // Le endpoint pour l'enregistrement des admins
-const API_REGISTER_ENDPOINT = "/auth/admin/register"; // <--- CORRIGÉ ICI
+const API_REGISTER_ENDPOINT = "/auth/register"; // <--- CORRIGÉ ICI
 
 function RegisterPage() {
   const [email, setEmail] = useState("");
