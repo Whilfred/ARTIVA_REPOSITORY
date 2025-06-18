@@ -3,10 +3,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
-const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL ||
-  "https://artiva-repository.onrender.com/api"; // Bonne pratique
-// Le endpoint pour l'enregistrement des admins
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://artiva-repository.onrender.com/api";
+
 
 function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -47,7 +45,7 @@ function RegisterPage() {
 
       setTimeout(() => {
         navigate("/login");
-      }, 3000);
+      }, 1000);
     } catch (err) {
       console.error("Erreur d'inscription admin:", err);
       setError(

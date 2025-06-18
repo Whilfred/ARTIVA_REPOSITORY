@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom"; // <--- AJOUTEZ Link ICI
 
-// **ATTENTION : REMPLACE PAR L'URL DE TON BACKEND EN LOCAL**
+// **ATTENTION : REMPLACE PAR L'URL DE TON BACKEND EN LOCAL*
 // Le commentaire ci-dessus est un peu déroutant maintenant que l'URL pointe vers onrender.com.
 // Il est préférable d'utiliser des variables d'environnement pour cela.
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://artiva-repository.onrender.com/api";
