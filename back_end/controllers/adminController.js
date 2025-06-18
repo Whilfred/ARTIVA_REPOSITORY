@@ -3,19 +3,16 @@ const db = require("../config/db"); // Notre module pour interagir avec la BDD
 const bcrypt = require("bcryptjs"); // Pour hacher les mots de passe
 const jwt = require("jsonwebtoken"); // On l'utilisera pour le login plus tard
 
-
 // NOUVELLE FONCTION : Enregistrer un nouvel administrateur
 exports.registerAdmin = async (req, res) => {
-  const { email, password, role } = req.body; // Supprime name d'ici
+  console.log("Requête reçue pour registerAdmin - Body:", req.body);
+  const { email, password, role } = req.body;
 
   // Validation basique
-  if (!email || !password) { // Supprime la vérification de name
-    return res
-      .status(400)
-      .json({
-        message:
-          "Veuillez fournir l'email et le mot de passe pour l'admin.",
-      });
+  if (!email || !password) {
+    return res.status(400).json({
+      message: "Veuillez fournir l'email et le mot de passe pour l'admin.",
+    });
   }
 
   const adminRole = role || "admin";
@@ -36,17 +33,20 @@ exports.registerAdmin = async (req, res) => {
     const saltRounds = parseInt(process.env.PASSWORD_SALT_ROUNDS || "10");
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Modifie la requête d'insertion
     const insertAdminQuery = `
       INSERT INTO admin (email, password_hash, role)
       VALUES ($1, $2, $3)
-      RETURNING id, email, role, created_at; // Supprime name d'ici aussi
+      RETURNING id, email, role, created_at; 
     `;
+    console.log("Exécution SQL:", insertAdminQuery);
+    console.log("Paramètres SQL:", [email, hashedPassword, adminRole]);
+
     const newAdmin = await db.query(insertAdminQuery, [
-      email, // Supprime name d'ici
+      email,
       hashedPassword,
       adminRole,
     ]);
+    console.log("Résultat SQL:", newAdmin.rows);
 
     res.status(201).json({
       message: "Administrateur créé avec succès !",
@@ -54,17 +54,14 @@ exports.registerAdmin = async (req, res) => {
     });
   } catch (error) {
     console.error(
-      "Erreur lors de l'enregistrement de l'administrateur:", // VÉRIFIE LES LOGS RENDER POUR CETTE ERREUR
+      "Erreur lors de l'enregistrement de l'administrateur:",
       error
     );
-    res
-      .status(500)
-      .json({
-        message: "Erreur serveur lors de la création de l'administrateur.",
-      });
+    res.status(500).json({
+      message: "Erreur serveur lors de la création de l'administrateur.",
+    });
   }
 };
-
 
 // Fonction pour connecter un utilisateur (client ou admin)
 exports.loginUser = async (req, res) => {
@@ -80,11 +77,12 @@ exports.loginUser = async (req, res) => {
   try {
     let userRecord;
     let userTable = ""; // Pour savoir de quelle table vient l'utilisateur
-     let userIsActive = true; // Supposer actif par défaut
+    let userIsActive = true; // Supposer actif par défaut
 
     // 2. Essayer de trouver l'utilisateur dans la table 'admin' d'abord
     const adminQuery =
       "SELECT id, email, password_hash, role FROM admin WHERE email = $1";
+
     const adminResult = await db.query(adminQuery, [email]);
 
     if (adminResult.rows.length > 0) {
@@ -105,7 +103,9 @@ exports.loginUser = async (req, res) => {
           // Vérifie explicitement false
           return res
             .status(403)
-            .json({ message: "Veuillez vérifier vos informations de connexion." });
+            .json({
+              message: "Veuillez vérifier vos informations de connexion.",
+            });
         }
       }
     }
@@ -118,9 +118,15 @@ exports.loginUser = async (req, res) => {
     }
 
     // *** NOUVELLE VÉRIFICATION ***
-    if (!userIsActive) { // Vérifier si le compte est actif
+    if (!userIsActive) {
+      // Vérifier si le compte est actif
       console.log(`Tentative de connexion pour le compte désactivé: ${email}`);
-      return res.status(403).json({ message: 'Ce compte n\'existe pas. Veuillez contacter le support ou en créer un nouveau.' }); // 403 Forbidden
+      return res
+        .status(403)
+        .json({
+          message:
+            "Ce compte n'existe pas. Veuillez contacter le support ou en créer un nouveau.",
+        }); // 403 Forbidden
     }
 
     // 5. Vérifier le mot de passe
@@ -153,12 +159,10 @@ exports.loginUser = async (req, res) => {
 
     if (userRecord && userRecord.is_active === false) {
       // Ou !userRecord.is_active si la colonne existe
-      return res
-        .status(403)
-        .json({
-          message:
-            "Ce compte n'existe pas. Veuillez contacter le support ou en créer un nouveau.",
-        });
+      return res.status(403).json({
+        message:
+          "Ce compte n'existe pas. Veuillez contacter le support ou en créer un nouveau.",
+      });
     }
 
     res.status(200).json({

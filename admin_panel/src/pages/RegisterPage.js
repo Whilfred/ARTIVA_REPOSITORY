@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://artiva-repository.onrender.com/api";
-
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL ||
+  "https://artiva-repository.onrender.com/api";
 
 function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -28,10 +29,12 @@ function RegisterPage() {
     }
 
     try {
-      const response = await axios.post(
-        `${API_BASE_URL}/auth/admin/register`, // Sera maintenant /api/auth/admin/register
-        { email, password }
-      );
+      const url = `${API_BASE_URL}/auth/admin/register`;
+      const payload = { email, password /*, name, role si applicable */ };
+      console.log("Appel API - URL:", url);
+      console.log("Appel API - Payload:", payload);
+      const response = await axios.post(url, payload);
+      console.log("Réponse API:", response.data);
 
       // Le backend pour registerAdmin renvoie response.data.admin
       setSuccessMessage(
