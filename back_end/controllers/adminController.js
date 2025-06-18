@@ -1,68 +1,70 @@
-// ARTIVA/back_end/controllers/authController.js
+// ARTIVA/back_end/controllers/adminController.js
 const db = require("../config/db"); // Notre module pour interagir avec la BDD
 const bcrypt = require("bcryptjs"); // Pour hacher les mots de passe
 const jwt = require("jsonwebtoken"); // On l'utilisera pour le login plus tard
 
-// Fonction pour enregistrer un nouvel utilisateur (client)
-exports.registerUser = async (req, res) => {
-  // 1. Récupérer les données du corps de la requête
-  const { name, email, password, address, phone } = req.body;
-  // Le rôle sera 'customer' par défaut comme défini dans la BDD
 
-  // 2. Validation basique des données (tu pourras ajouter des validations plus poussées)
-  if (!name || !email || !password) {
+// NOUVELLE FONCTION : Enregistrer un nouvel administrateur
+exports.registerAdmin = async (req, res) => {
+  const { email, password, role } = req.body; // Supprime name d'ici
+
+  // Validation basique
+  if (!email || !password) { // Supprime la vérification de name
     return res
       .status(400)
       .json({
-        message: "Veuillez fournir le nom, l'email et le mot de passe.",
+        message:
+          "Veuillez fournir l'email et le mot de passe pour l'admin.",
       });
   }
-  // Tu peux ajouter des validations pour le format de l'email, la complexité du mot de passe, etc.
+
+  const adminRole = role || "admin";
+  if (adminRole !== "admin" && adminRole !== "super_admin") {
+    return res.status(400).json({ message: "Rôle administrateur invalide." });
+  }
 
   try {
-    // 3. Vérifier si l'utilisateur existe déjà (par email)
-    const userExistsQuery = "SELECT * FROM users WHERE email = $1";
-    const existingUser = await db.query(userExistsQuery, [email]);
+    const adminExistsQuery = "SELECT * FROM admin WHERE email = $1";
+    const existingAdmin = await db.query(adminExistsQuery, [email]);
 
-    if (existingUser.rows.length > 0) {
+    if (existingAdmin.rows.length > 0) {
       return res
         .status(409)
-        .json({ message: "Un utilisateur avec cet email existe déjà." }); // 409 Conflict
+        .json({ message: "Un administrateur avec cet email existe déjà." });
     }
 
-    // 4. Hacher le mot de passe
     const saltRounds = parseInt(process.env.PASSWORD_SALT_ROUNDS || "10");
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // 5. Insérer le nouvel utilisateur dans la base de données
-    const insertUserQuery = `
-      INSERT INTO users (name, email, password_hash, address, phone)
-      VALUES ($1, $2, $3, $4, $5)
-      RETURNING id, name, email, role, created_at; 
-    `; // RETURNING permet de récupérer des infos sur l'utilisateur créé
-    const newUser = await db.query(insertUserQuery, [
-      name,
-      email,
+    // Modifie la requête d'insertion
+    const insertAdminQuery = `
+      INSERT INTO admin (email, password_hash, role)
+      VALUES ($1, $2, $3)
+      RETURNING id, email, role, created_at; // Supprime name d'ici aussi
+    `;
+    const newAdmin = await db.query(insertAdminQuery, [
+      email, // Supprime name d'ici
       hashedPassword,
-      address, // Peut être null
-      phone, // Peut être null
+      adminRole,
     ]);
 
-    // 6. Renvoyer une réponse de succès
-    // On ne renvoie pas le hash du mot de passe
     res.status(201).json({
-      message: "Utilisateur créé avec succès !",
-      user: newUser.rows[0],
+      message: "Administrateur créé avec succès !",
+      admin: newAdmin.rows[0],
     });
   } catch (error) {
-    console.error("Erreur lors de l'enregistrement de l'utilisateur:", error);
+    console.error(
+      "Erreur lors de l'enregistrement de l'administrateur:", // VÉRIFIE LES LOGS RENDER POUR CETTE ERREUR
+      error
+    );
     res
       .status(500)
       .json({
-        message: "Erreur serveur lors de la création de l'utilisateur.",
+        message: "Erreur serveur lors de la création de l'administrateur.",
       });
   }
 };
+
 
 // Fonction pour connecter un utilisateur (client ou admin)
 exports.loginUser = async (req, res) => {
@@ -171,5 +173,3 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur lors de la connexion." });
   }
 };
-
-

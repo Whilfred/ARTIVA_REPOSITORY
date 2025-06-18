@@ -21,7 +21,7 @@ function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+      const response = await axios.post(`${API_BASE_URL}/auth/admin/login`, {
         email,
         password,
       });
